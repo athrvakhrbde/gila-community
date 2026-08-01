@@ -1,0 +1,30 @@
+# Keep the Render free web service awake so the first visitor
+# doesn't wait for a cold start.
+name: Keepalive
+
+on:
+  schedule:
+    # Every 10 minutes
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping production health
+        run: |
+          set -euo pipefail
+          for i in 1 2 3; do
+            code=$(curl -sS -o /tmp/health.json -w "%{http_code}" --max-time 60 \
+              https://gila-community.onrender.com/api/health || true)
+            echo "attempt=$i http=$code"
+            cat /tmp/health.json || true
+            echo
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "keepalive failed"
+          exit 1
