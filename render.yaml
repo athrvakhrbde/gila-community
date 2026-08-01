@@ -1,0 +1,22 @@
+# Deploy Express + Socket.io + static client as one web service.
+# MongoDB: use Atlas (scripts/atlas-bootstrap.sh) and set MONGO_URI in the dashboard.
+services:
+  - type: web
+    name: gila-community
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm install --prefix client && npm install --prefix server && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TOKEN_KEY
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false
+      - key: MONGO_URI
+        sync: false
+      - key: PORT
+        value: "10000"
