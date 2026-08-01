@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Post } from "../api/posts";
 import { likePost, unlikePost } from "../api/posts";
 import { useAuth } from "../context/AuthContext";
@@ -25,10 +25,15 @@ type Props = {
 
 export function PostCard({ post, onChange }: Props) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   async function toggleLike() {
-    if (!user || busy) return;
+    if (busy) return;
+    if (!user) {
+      navigate("/login", { state: { from: "/" } });
+      return;
+    }
     setBusy(true);
     try {
       if (post.liked) {
@@ -91,9 +96,16 @@ export function PostCard({ post, onChange }: Props) {
           type="button"
           className={post.liked ? "pill-filled" : "pill-outline"}
           onClick={toggleLike}
-          disabled={!user || busy}
-          aria-label={post.liked ? "Unlike" : "Like"}
+          disabled={busy}
+          aria-label={
+            user
+              ? post.liked
+                ? "Unlike"
+                : "Like"
+              : "Log in to like"
+          }
           aria-pressed={Boolean(post.liked)}
+          title={user ? undefined : "Log in to like"}
         >
           {post.liked ? <HeartIconFilled /> : <HeartIcon />}
           <span>

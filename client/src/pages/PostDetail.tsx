@@ -60,7 +60,11 @@ export function PostDetail() {
   }, [load]);
 
   async function toggleLike() {
-    if (!post || !user) return;
+    if (!post) return;
+    if (!user) {
+      navigate("/login", { state: { from: `/posts/${post._id}` } });
+      return;
+    }
     try {
       if (post.liked) {
         await unlikePost(post._id);
