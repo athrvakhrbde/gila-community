@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -11,6 +12,7 @@ import * as usersApi from "../api/users";
 
 type AuthContextValue = {
   user: AuthSession | null;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (
     username: string,
@@ -18,6 +20,7 @@ type AuthContextValue = {
     password: string
   ) => Promise<void>;
   logout: () => void;
+  refreshSession: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -34,12 +37,48 @@ function readStoredUser(): AuthSession | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthSession | null>(() => readStoredUser());
+  const [loading, setLoading] = useState(() => Boolean(readStoredUser()));
 
   const persist = useCallback((session: AuthSession | null) => {
     setUser(session);
     if (session) localStorage.setItem("user", JSON.stringify(session));
     else localStorage.removeItem("user");
   }, []);
+
+  const refreshSession = useCallback(async () => {
+    const stored = readStoredUser();
+    if (!stored?.token) {
+      persist(null);
+      return;
+    }
+    try {
+      const session = await usersApi.getMe();
+      persist(session);
+    } catch {
+      persist(null);
+    }
+  }, [persist]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!readStoredUser()?.token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const session = await usersApi.getMe();
+        if (!cancelled) persist(session);
+      } catch {
+        if (!cancelled) persist(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [persist]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -60,8 +99,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => persist(null), [persist]);
 
   const value = useMemo(
-    () => ({ user, login, register, logout }),
-    [user, login, register, logout]
+    () => ({ user, loading, login, register, logout, refreshSession }),
+    [user, loading, login, register, logout, refreshSession]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

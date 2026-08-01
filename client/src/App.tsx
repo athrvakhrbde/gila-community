@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { AppLayout } from "./components/layout/AppLayout";
 import { PrivateRoute } from "./components/PrivateRoute";
+import { AdminRoute } from "./components/AdminRoute";
 import { Explore } from "./pages/Explore";
 import { CreatePost } from "./pages/CreatePost";
 import { PostDetail } from "./pages/PostDetail";
@@ -10,6 +11,7 @@ import { Profile } from "./pages/Profile";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { Messenger } from "./pages/Messenger";
+import { Admin } from "./pages/Admin";
 
 export default function App() {
   return (
@@ -37,6 +39,14 @@ export default function App() {
                 <PrivateRoute>
                   <Messenger />
                 </PrivateRoute>
+              }
+            />
+            <Route
+              path="admin"
+              element={
+                <AdminRoute>
+                  <Admin />
+                </AdminRoute>
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -118,6 +118,23 @@ export async function updateUser(req: Request, res: Response) {
   }
 }
 
+/** Refresh session from DB so admin promotions apply without a full re-login. */
+export async function getMe(req: Request, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User does not exist");
+
+    const token = signToken(user);
+    return res.json(getUserDict(token, user));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unauthorized";
+    return res.status(401).json({ error: message });
+  }
+}
+
 export async function getUser(req: Request, res: Response) {
   try {
     const username = param(req, "username");

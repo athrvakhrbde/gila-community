@@ -28,6 +28,7 @@ export function Navbar() {
   const links = [
     ...publicLinks,
     ...(user ? privateLinks : []),
+    ...(user?.isAdmin ? [{ to: "/admin", label: "Admin" } satisfies NavItem] : []),
   ];
 
   useEffect(() => {

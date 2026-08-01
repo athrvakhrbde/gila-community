@@ -35,6 +35,10 @@ export function login(body: { email: string; password: string }) {
   });
 }
 
+export function getMe() {
+  return apiFetch<AuthSession>("/api/users/me", {}, true);
+}
+
 export function getUser(username: string) {
   return apiFetch<UserProfileResponse>(`/api/users/${username}`);
 }

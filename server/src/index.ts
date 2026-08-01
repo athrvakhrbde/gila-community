@@ -10,6 +10,7 @@ import posts from "./routes/posts.js";
 import users from "./routes/users.js";
 import comments from "./routes/comments.js";
 import messages from "./routes/messages.js";
+import admin from "./routes/admin.js";
 import { authSocket, registerSocketHandlers } from "./socket.js";
 
 dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
@@ -112,6 +113,7 @@ app.use("/api/posts", posts);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
 app.use("/api/messages", messages);
+app.use("/api/admin", admin);
 
 if (isProd) {
   const clientDist = path.resolve(__dirname, "../../client/dist");

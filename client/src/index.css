@@ -650,6 +650,19 @@
     background: var(--color-bg-header);
   }
 
+  .admin-table {
+    @apply w-full min-w-[640px] border-collapse text-left;
+  }
+  .admin-table th {
+    @apply meta-label border-b border-border-light pb-3 pr-4 font-normal;
+  }
+  .admin-table td {
+    @apply border-b border-border-light py-3 pr-4 align-middle;
+  }
+  .admin-table tr:last-child td {
+    border-bottom: 0;
+  }
+
   /* Horizontal filter/sort rails on small screens */
   .pill-rail {
     @apply flex gap-2 overflow-x-auto pb-1;
