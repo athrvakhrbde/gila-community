@@ -25,7 +25,6 @@ export const PRODUCT = {
   messengerEyebrow: "Private support",
   messengerLead:
     "Message another member for one-to-one support — peer to peer, not medical advice.",
-  sidebarMembers: "Community members",
   sidebarSpaces: "Spaces",
   sidebarTop: "Top discussions",
   profileEyebrow: "Community member",
