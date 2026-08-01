@@ -20,6 +20,7 @@ import { CommentTree } from "../components/CommentTree";
 import { Button } from "../components/ui/Button";
 import { Textarea } from "../components/ui/Input";
 import { Reveal } from "../components/ui/Reveal";
+import { getSubcommunity } from "../lib/subcommunities";
 
 export function PostDetail() {
   const { id } = useParams();
@@ -145,6 +146,12 @@ export function PostDetail() {
       <Reveal>
         <article className="surface-card">
           <div className="mb-3 flex flex-wrap items-center gap-2">
+            <Link
+              to={`/?sub=${post.subcommunity || "general"}`}
+              className="badge no-underline"
+            >
+              {getSubcommunity(post.subcommunity).shortLabel}
+            </Link>
             <Link
               to={`/users/${post.poster.username}`}
               className="meta-label no-underline transition-opacity hover:opacity-65"

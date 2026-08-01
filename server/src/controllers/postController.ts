@@ -1,8 +1,10 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
+import { isSubcommunitySlug } from "../constants/subcommunities.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
 import PostLike from "../models/PostLike.js";
+import User from "../models/User.js";
 import { param } from "../util/params.js";
 import { PUBLIC_USER_POPULATE } from "../util/publicUser.js";
 
@@ -49,10 +51,19 @@ async function enrichWithUserLikePreview(posts: LeanPost[]) {
 export async function createPost(req: Request, res: Response) {
   try {
     const userId = req.user?.userId;
-    const { title, content } = req.body as { title?: string; content?: string };
+    const { title, content, subcommunity } = req.body as {
+      title?: string;
+      content?: string;
+      subcommunity?: string;
+    };
 
     if (!userId) throw new Error("Unauthorized");
     if (!(title && content)) throw new Error("All input required");
+
+    const space = subcommunity ?? "general";
+    if (!isSubcommunitySlug(space)) {
+      throw new Error("Invalid subcommunity");
+    }
 
     if (postCooldown.has(userId)) {
       throw new Error("You are posting too frequently. Please try again shortly.");
@@ -61,7 +72,12 @@ export async function createPost(req: Request, res: Response) {
     postCooldown.add(userId);
     setTimeout(() => postCooldown.delete(userId), 60_000);
 
-    const post = await Post.create({ title, content, poster: userId });
+    const post = await Post.create({
+      title,
+      content,
+      poster: userId,
+      subcommunity: space,
+    });
     return res.json(post);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Create failed";
@@ -155,6 +171,9 @@ export async function getPosts(req: Request, res: Response) {
     const sortBy = String(req.query.sortBy ?? "-createdAt");
     const author = req.query.author ? String(req.query.author) : undefined;
     const search = req.query.search ? String(req.query.search) : undefined;
+    const subcommunity = req.query.subcommunity
+      ? String(req.query.subcommunity)
+      : undefined;
 
     const filter: Record<string, unknown> = {};
 
@@ -162,8 +181,14 @@ export async function getPosts(req: Request, res: Response) {
       filter.title = { $regex: search, $options: "i" };
     }
 
+    if (subcommunity && subcommunity !== "all") {
+      if (!isSubcommunitySlug(subcommunity)) {
+        throw new Error("Invalid subcommunity");
+      }
+      filter.subcommunity = subcommunity;
+    }
+
     if (author) {
-      const User = (await import("../models/User.js")).default;
       const user = await User.findOne({ username: author }).select("_id");
       if (!user) {
         return res.json({ data: [], count: 0 });

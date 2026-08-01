@@ -26,8 +26,10 @@ export const PRODUCT = {
   messengerLead:
     "Message another member for one-to-one support — peer to peer, not medical advice.",
   sidebarMembers: "Community members",
+  sidebarSpaces: "Spaces",
   sidebarTop: "Top discussions",
   profileEyebrow: "Community member",
+  emptySpace: "No discussions in this space yet.",
   disclaimer:
     "Peer support only — not a substitute for advice from your doctor or diabetes educator.",
 } as const;

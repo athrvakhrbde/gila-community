@@ -3,6 +3,7 @@ import type { Post } from "../api/posts";
 import { likePost, unlikePost } from "../api/posts";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
+import { getSubcommunity } from "../lib/subcommunities";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -50,6 +51,12 @@ export function PostCard({ post, onChange }: Props) {
   return (
     <article className="content-card">
       <div className="mb-3 flex flex-wrap items-center gap-2">
+        <Link
+          to={`/?sub=${post.subcommunity || "general"}`}
+          className="badge no-underline"
+        >
+          {getSubcommunity(post.subcommunity).shortLabel}
+        </Link>
         <Link
           to={`/users/${post.poster.username}`}
           className="meta-label no-underline transition-opacity hover:opacity-65"

@@ -1,15 +1,25 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPost } from "../api/posts";
 import { Button } from "../components/ui/Button";
-import { Input, Textarea } from "../components/ui/Input";
+import { Input, Select, Textarea } from "../components/ui/Input";
 import { Reveal } from "../components/ui/Reveal";
 import { PRODUCT } from "../lib/copy";
+import {
+  SUBCOMMUNITIES,
+  isSubcommunitySlug,
+  type SubcommunitySlug,
+} from "../lib/subcommunities";
 
 export function CreatePost() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialSub = searchParams.get("sub");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [subcommunity, setSubcommunity] = useState<SubcommunitySlug>(
+    initialSub && isSubcommunitySlug(initialSub) ? initialSub : "general"
+  );
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -21,6 +31,7 @@ export function CreatePost() {
       const post = await createPost({
         title: title.trim(),
         content: content.trim(),
+        subcommunity,
       });
       navigate(`/posts/${post._id}`);
     } catch (err) {
@@ -41,6 +52,22 @@ export function CreatePost() {
           <p className="body-lg">{PRODUCT.createLead}</p>
         </div>
         <form className="surface-card flex flex-col gap-4" onSubmit={onSubmit}>
+          <Select
+            id="subcommunity"
+            label="Space"
+            value={subcommunity}
+            required
+            onChange={(e) => {
+              const value = e.target.value;
+              if (isSubcommunitySlug(value)) setSubcommunity(value);
+            }}
+          >
+            {SUBCOMMUNITIES.map((space) => (
+              <option key={space.slug} value={space.slug}>
+                {space.name}
+              </option>
+            ))}
+          </Select>
           <Input
             id="title"
             label="Title"

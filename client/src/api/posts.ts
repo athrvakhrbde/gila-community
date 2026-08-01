@@ -10,6 +10,7 @@ export type Post = {
   title: string;
   content: string;
   poster: Poster;
+  subcommunity?: string;
   likeCount: number;
   commentCount: number;
   edited?: boolean;
@@ -29,12 +30,14 @@ export function getPosts(params: {
   sortBy?: string;
   search?: string;
   author?: string;
+  subcommunity?: string;
 }) {
   const qs = new URLSearchParams();
   if (params.page) qs.set("page", String(params.page));
   if (params.sortBy) qs.set("sortBy", params.sortBy);
   if (params.search) qs.set("search", params.search);
   if (params.author) qs.set("author", params.author);
+  if (params.subcommunity) qs.set("subcommunity", params.subcommunity);
   return apiFetch<PostsResponse>(`/api/posts?${qs.toString()}`);
 }
 
@@ -42,7 +45,11 @@ export function getPost(id: string) {
   return apiFetch<Post>(`/api/posts/${id}`);
 }
 
-export function createPost(body: { title: string; content: string }) {
+export function createPost(body: {
+  title: string;
+  content: string;
+  subcommunity: string;
+}) {
   return apiFetch<Post>(
     "/api/posts",
     { method: "POST", body: JSON.stringify(body) },

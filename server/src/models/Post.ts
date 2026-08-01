@@ -1,4 +1,5 @@
 import mongoose, { Schema, type InferSchemaType } from "mongoose";
+import { SUBCOMMUNITY_SLUGS } from "../constants/subcommunities.js";
 import filter from "../util/filter.js";
 import PostLike from "./PostLike.js";
 
@@ -18,6 +19,12 @@ const PostSchema = new Schema(
       type: String,
       required: true,
       maxlength: [8000, "Must be no more than 8000 characters"],
+    },
+    subcommunity: {
+      type: String,
+      enum: SUBCOMMUNITY_SLUGS,
+      default: "general",
+      index: true,
     },
     likeCount: {
       type: Number,

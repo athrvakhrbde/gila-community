@@ -4,6 +4,7 @@ import { getRandomUsers, type PublicUser } from "../../api/users";
 import { getPosts, type Post } from "../../api/posts";
 import { Reveal } from "../ui/Reveal";
 import { PRODUCT } from "../../lib/copy";
+import { SUBCOMMUNITIES } from "../../lib/subcommunities";
 
 export function Sidebar() {
   const [users, setUsers] = useState<PublicUser[]>([]);
@@ -33,6 +34,24 @@ export function Sidebar() {
   return (
     <>
       <Reveal>
+        <section className="sidebar-panel">
+          <p className="section-eyebrow mb-3">{PRODUCT.sidebarSpaces}</p>
+          <ul className="flex flex-col gap-1">
+            {SUBCOMMUNITIES.map((space) => (
+              <li key={space.slug}>
+                <Link
+                  to={`/?sub=${space.slug}`}
+                  className="body-sm flex min-h-[40px] items-center text-fg no-underline transition-opacity hover:opacity-65"
+                >
+                  {space.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </Reveal>
+
+      <Reveal delay={0.04}>
         <section className="sidebar-panel">
           <p className="section-eyebrow mb-3">{PRODUCT.sidebarMembers}</p>
           <ul className="flex flex-col gap-1">
