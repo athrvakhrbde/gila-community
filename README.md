@@ -49,15 +49,18 @@ Promote a moderator after they sign up:
 npm run make-admin -- theirusername
 ```
 
-### Deploy the app (Render)
+### Deploy the app (Render — recommended)
 
-This stack needs a long-running Node process (Socket.io). Use `render.yaml`:
+This stack needs a long-running Node process (Socket.io). **Vercel alone won’t work** for DMs. **Fly.io** usually requires a paid account now.
 
-1. `render login`
-2. Create a Blueprint from this repo (or `render blueprints apply`)
-3. Set `MONGO_URI` (from Atlas) and `CLIENT_URL` (your Render URL) in the dashboard
+1. Open [Render Dashboard](https://dashboard.render.com/) → New → Blueprint
+2. Connect GitHub repo `athrvakhrbde/gila-community` (uses `render.yaml`)
+3. Set env vars when prompted:
+   - `MONGO_URI` — from Atlas (your local `.env`)
+   - `CLIENT_URL` — your Render URL, e.g. `https://gila-community.onrender.com`
+4. Deploy. Health check: `/api/health`
 
-Vercel alone is not enough for the API + realtime DMs.
+Free Render web services sleep when idle (first request can be slow). A card may be required to activate the account even on free.
 
 - App: http://127.0.0.1:5173 (Vite proxies `/api` and `/socket.io` to the API)
 - API: http://127.0.0.1:4000
