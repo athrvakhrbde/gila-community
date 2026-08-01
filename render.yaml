@@ -6,17 +6,19 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm install --prefix client && npm install --prefix server && npm run build
+    # Include devDependencies so Vite/TypeScript are available during build
+    # (Render sets NODE_ENV=production which would otherwise skip them).
+    buildCommand: NPM_CONFIG_PRODUCTION=false npm install && NPM_CONFIG_PRODUCTION=false npm install --prefix client && NPM_CONFIG_PRODUCTION=false npm install --prefix server && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "20"
       - key: TOKEN_KEY
         generateValue: true
       - key: CLIENT_URL
         sync: false
       - key: MONGO_URI
         sync: false
-      - key: PORT
-        value: "10000"
