@@ -151,7 +151,7 @@ export function Explore() {
 
       {error ? <p className="error-banner">{error}</p> : null}
 
-      <RevealStagger className="flex flex-col gap-4">
+      <RevealStagger immediate className="flex flex-col gap-4">
         {posts.map((post) => (
           <RevealItem key={post._id}>
             <PostCard

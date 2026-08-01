@@ -141,6 +141,16 @@ async function start() {
   await mongoose.connect(mongoUri);
   console.log("MongoDB connected");
 
+  // Older posts were created before subcommunity existed — ensure they show in space filters.
+  const { default: Post } = await import("./models/Post.js");
+  const backfill = await Post.updateMany(
+    { $or: [{ subcommunity: { $exists: false } }, { subcommunity: null }] },
+    { $set: { subcommunity: "general" } }
+  );
+  if (backfill.modifiedCount > 0) {
+    console.log(`Backfilled subcommunity on ${backfill.modifiedCount} post(s)`);
+  }
+
   httpServer.listen(port, () => {
     console.log(
       `gila community listening on :${port} (${isProd ? "production" : "development"})`

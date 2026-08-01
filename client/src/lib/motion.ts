@@ -8,7 +8,7 @@ export const novuEase = augenEase;
 /** @deprecated use augenLetterEase */
 export const novuLetterEase = augenLetterEase;
 
-export const viewport = { once: true, margin: "-80px" as const };
+export const viewport = { once: true, amount: 0.15 as const };
 
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 32 },

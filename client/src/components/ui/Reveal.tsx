@@ -27,16 +27,20 @@ export function Reveal({
 export function RevealStagger({
   children,
   className = "",
+  /** Use for async-loaded lists — whileInView can leave opacity:0 forever when children mount after the parent. */
+  immediate = false,
 }: {
   children: ReactNode;
   className?: string;
+  immediate?: boolean;
 }) {
   return (
     <motion.div
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={viewport}
+      {...(immediate
+        ? { animate: "visible" as const }
+        : { whileInView: "visible" as const, viewport })}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
