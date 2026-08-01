@@ -4,6 +4,11 @@ import { likePost, unlikePost } from "../api/posts";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { getSubcommunity } from "../lib/subcommunities";
+import {
+  CommentIcon,
+  HeartIcon,
+  HeartIconFilled,
+} from "./ui/Icons";
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString(undefined, {
@@ -87,12 +92,24 @@ export function PostCard({ post, onChange }: Props) {
           className={post.liked ? "pill-filled" : "pill-outline"}
           onClick={toggleLike}
           disabled={!user || busy}
+          aria-label={post.liked ? "Unlike" : "Like"}
+          aria-pressed={Boolean(post.liked)}
         >
-          {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+          {post.liked ? <HeartIconFilled /> : <HeartIcon />}
+          <span>
+            {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+          </span>
         </button>
-        <Link to={`/posts/${post._id}`} className="pill-outline">
-          {post.commentCount}{" "}
-          {post.commentCount === 1 ? "comment" : "comments"}
+        <Link
+          to={`/posts/${post._id}`}
+          className="pill-outline"
+          aria-label={`${post.commentCount} comments`}
+        >
+          <CommentIcon />
+          <span>
+            {post.commentCount}{" "}
+            {post.commentCount === 1 ? "comment" : "comments"}
+          </span>
         </Link>
       </div>
     </article>

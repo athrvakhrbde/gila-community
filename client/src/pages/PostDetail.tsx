@@ -21,6 +21,7 @@ import { Button } from "../components/ui/Button";
 import { Textarea } from "../components/ui/Input";
 import { Reveal } from "../components/ui/Reveal";
 import { getSubcommunity } from "../lib/subcommunities";
+import { HeartIcon, HeartIconFilled } from "../components/ui/Icons";
 
 export function PostDetail() {
   const { id } = useParams();
@@ -194,11 +195,17 @@ export function PostDetail() {
               className={post.liked ? "pill-filled" : "pill-outline"}
               onClick={toggleLike}
               disabled={!user}
+              aria-label={post.liked ? "Unlike" : "Like"}
+              aria-pressed={Boolean(post.liked)}
             >
-              {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+              {post.liked ? <HeartIconFilled /> : <HeartIcon />}
+              <span>
+                {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+              </span>
             </button>
             <button type="button" className="pill-outline" onClick={openLikers}>
-              Who liked
+              <HeartIcon />
+              <span>Who liked</span>
             </button>
             {canEdit ? (
               <>

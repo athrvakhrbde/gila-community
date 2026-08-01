@@ -424,8 +424,13 @@
     color: var(--color-accent-text);
   }
 
+  .reaction-icon {
+    flex-shrink: 0;
+    display: block;
+  }
+
   .pill-filled {
-    @apply inline-flex items-center rounded-[54px] bg-accent px-[11px] py-[3px] no-underline;
+    @apply inline-flex items-center gap-1.5 rounded-[54px] bg-accent px-[11px] py-[3px] no-underline;
     color: var(--color-on-accent);
     font-size: var(--text-sm);
     font-weight: 350;
@@ -437,7 +442,7 @@
   }
 
   .pill-outline {
-    @apply inline-flex items-center rounded-[54px] border bg-transparent px-[11px] py-[3px] no-underline;
+    @apply inline-flex items-center gap-1.5 rounded-[54px] border bg-transparent px-[11px] py-[3px] no-underline;
     font-size: var(--text-sm);
     font-weight: 350;
     letter-spacing: -0.02em;
