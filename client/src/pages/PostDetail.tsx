@@ -198,9 +198,15 @@ export function PostDetail() {
               type="button"
               className={post.liked ? "pill-filled" : "pill-outline"}
               onClick={toggleLike}
-              disabled={!user}
-              aria-label={post.liked ? "Unlike" : "Like"}
+              aria-label={
+                user
+                  ? post.liked
+                    ? "Unlike"
+                    : "Like"
+                  : "Log in to like"
+              }
               aria-pressed={Boolean(post.liked)}
+              title={user ? undefined : "Log in to like"}
             >
               {post.liked ? <HeartIconFilled /> : <HeartIcon />}
               <span>
